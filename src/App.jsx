@@ -16,41 +16,55 @@ import {
   Target,
   Zap,
   ShieldCheck,
-  ExternalLink
+  ExternalLink,
+  BarChart3,
+  Settings,
+  UploadCloud,
+  DollarSign,
+  MapPin,
+  Calendar
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { parseJD, scoreCandidates, simulateChat, calculateInterest } from './logic/engine'
+
+// --- Configuration ---
+const PLATFORM_NAME = "ScoutAI Pro";
+const COMPANY_NAME = "Apex Strategic Talent"; 
 
 // --- Components ---
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <motion.div 
-    whileHover={{ x: 4 }}
-    whileTap={{ scale: 0.98 }}
+    whileHover={{ x: 5, backgroundColor: 'rgba(255,255,255,0.05)' }}
+    whileTap={{ scale: 0.95 }}
     onClick={onClick}
     className={`sidebar-item ${active ? 'active' : ''}`}
   >
     <Icon size={20} />
     <span>{label}</span>
+    {active && <motion.div layoutId="activeNav" className="active-indicator" />}
   </motion.div>
 )
 
-const Header = () => (
-  <header className="main-header glass-panel">
+const Header = ({ companyName }) => (
+  <header className="main-header">
     <div className="logo-section">
-      <div className="logo-icon">
-        <BrainCircuit size={24} />
+      <div className="logo-icon-wrapper">
+        <BrainCircuit size={28} />
       </div>
-      <h1 className="gradient-text">ScoutAI</h1>
+      <div className="logo-text">
+        <h1 className="gradient-text">{PLATFORM_NAME}</h1>
+        <span className="company-badge">{companyName}</span>
+      </div>
     </div>
     <div className="header-actions">
-      <div className="search-bar glass-card">
-        <Search size={16} />
-        <input type="text" placeholder="Search talent..." />
+      <div className="search-bar-modern">
+        <Search size={18} />
+        <input type="text" placeholder="Explore talent network..." />
       </div>
-      <div className="user-profile">
-        <div className="status-indicator"></div>
-        <div className="profile-img">AS</div>
+      <div className="user-profile-modern">
+        <div className="profile-img-designer">AS</div>
+        <div className="status-dot"></div>
       </div>
     </div>
   </header>
@@ -90,46 +104,46 @@ const ChatSimulation = ({ candidate, onClose, onFinish }) => {
   }, []);
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay-designer">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.9, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="chat-modal glass-panel"
+        className="chat-modal-designer glass-panel"
       >
-        <div className="modal-header">
-          <div className="candidate-info">
-            <div className="avatar">{candidate.name[0]}</div>
+        <div className="modal-header-designer">
+          <div className="candidate-info-designer">
+            <div className="avatar-designer">{candidate.name[0]}</div>
             <div>
-              <h3>Chatting with {candidate.name}</h3>
-              <p>AI Engagement Agent #042</p>
+              <h3>{candidate.name}</h3>
+              <p>AI Neural Engagement</p>
             </div>
           </div>
-          <button onClick={onClose} className="close-btn"><X size={20} /></button>
+          <button onClick={onClose} className="close-btn-designer"><X size={24} /></button>
         </div>
         
-        <div className="chat-body">
+        <div className="chat-body-designer">
           <AnimatePresence>
             {messages.map((msg, i) => (
               <motion.div 
                 key={i}
-                initial={{ opacity: 0, x: msg.sender === 'AI' ? -10 : 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className={`message ${msg.sender.toLowerCase()}`}
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className={`message-designer ${msg.sender.toLowerCase()}`}
               >
-                <div className="message-bubble">{msg.text}</div>
+                <div className="message-bubble-designer">{msg.text}</div>
               </motion.div>
             ))}
             {isTyping && (
-              <motion.div className="message ai">
-                <div className="message-bubble typing">...</div>
+              <motion.div className="message-designer ai">
+                <div className="message-bubble-designer typing-designer">...</div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        <div className="chat-footer">
-          <div className="ai-status">
-            <Zap size={14} className="pulse" /> AI is analyzing candidate sentiment...
+        <div className="chat-footer-designer">
+          <div className="ai-status-designer">
+            <div className="pulse-dot"></div> Analyzing candidate intent vectors...
           </div>
         </div>
       </motion.div>
@@ -149,28 +163,27 @@ function App() {
   ]);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [showChat, setShowChat] = useState(false);
-
   const [discoveryLogs, setDiscoveryLogs] = useState([]);
+  const [companyName, setCompanyName] = useState(COMPANY_NAME);
 
   const handleParse = () => {
     if (!jdText.trim()) return;
     setIsParsing(true);
-    setDiscoveryLogs(["Initializing ScoutAI Agent...", "Analyzing JD Requirements..."]);
+    setDiscoveryLogs(["Neural engine initialized...", "Extracting semantic tokens..."]);
     
-    setTimeout(() => setDiscoveryLogs(prev => [...prev, "Scanning LinkedIn for matches..."]), 500);
-    setTimeout(() => setDiscoveryLogs(prev => [...prev, "Scraping GitHub for technical contributions..."]), 1000);
-    setTimeout(() => setDiscoveryLogs(prev => [...prev, "Verifying credentials on Indeed..."]), 1500);
+    setTimeout(() => setDiscoveryLogs(prev => [...prev, "Cross-referencing global clusters..."]), 500);
+    setTimeout(() => setDiscoveryLogs(prev => [...prev, "Validating technical proficiency vectors..."]), 1000);
+    setTimeout(() => setDiscoveryLogs(prev => [...prev, "Optimizing match scoring..."]), 1500);
 
     setTimeout(() => {
       const parsed = parseJD(jdText);
       const scored = scoreCandidates(parsed);
       setCandidates(scored);
       
-      // Save mission to history
       const newMission = {
         id: Date.now().toString(),
         role: parsed.role || 'Software Engineer',
-        jdText: jdText, // Store original JD
+        jdText: jdText,
         discovered: scored.length,
         engaged: 0,
         status: 'Complete',
@@ -208,131 +221,124 @@ function App() {
     }, 2000);
   };
 
+  const updateCandidateStatus = (id, newStatus) => {
+    setCandidates(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
+  };
+
   return (
-    <div className="app-container">
-      <aside className="sidebar glass-panel">
-        <div className="sidebar-brand">
-          <BrainCircuit size={28} className="logo-icon" />
-          <span>ScoutAI</span>
+    <div className="app-container-designer">
+      {/* Background blobs for artistic effect */}
+      <div className="blob blob-1"></div>
+      <div className="blob blob-2"></div>
+      <div className="blob blob-3"></div>
+
+      <aside className="sidebar-designer glass-panel">
+        <div className="sidebar-brand-designer">
+          <BrainCircuit size={32} className="brand-icon-designer" />
+          <span>SCOUT</span>
         </div>
-        <nav className="sidebar-nav">
-          <SidebarItem 
-            icon={TrendingUp} 
-            label="Overview" 
-            active={activeTab === 'dashboard'} 
-            onClick={() => setActiveTab('dashboard')} 
-          />
-          <SidebarItem 
-            icon={FileText} 
-            label="Scouting Missions" 
-            active={activeTab === 'jd'} 
-            onClick={() => setActiveTab('jd')} 
-          />
-          <SidebarItem 
-            icon={Users} 
-            label="Candidate Pool" 
-            active={activeTab === 'candidates'} 
-            onClick={() => setActiveTab('candidates')} 
-          />
-          <SidebarItem 
-            icon={Target} 
-            label="Shortlist" 
-            active={activeTab === 'shortlist'} 
-            onClick={() => setActiveTab('shortlist')} 
-          />
+        <nav className="sidebar-nav-designer">
+          <SidebarItem icon={TrendingUp} label="Overview" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
+          <SidebarItem icon={FileText} label="Missions" active={activeTab === 'jd'} onClick={() => setActiveTab('jd')} />
+          <SidebarItem icon={Users} label="Talent Pool" active={activeTab === 'candidates'} onClick={() => setActiveTab('candidates')} />
+          <SidebarItem icon={Target} label="Pipeline" active={activeTab === 'shortlist'} onClick={() => setActiveTab('shortlist')} />
+          <SidebarItem icon={BarChart3} label="Analytics" active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} />
+          <SidebarItem icon={Settings} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
         </nav>
         
-        <div className="sidebar-footer">
-          <div className="quota-card glass-card">
-            <div className="quota-header">
-              <span>Token Usage</span>
+        <div className="sidebar-footer-designer">
+          <div className="system-status-card glass-card">
+            <div className="status-header">
+              <span>Neural Load</span>
               <span>74%</span>
             </div>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: '74%' }}></div>
+            <div className="status-bar-bg">
+              <motion.div initial={{ width: 0 }} animate={{ width: '74%' }} className="status-bar-fill" />
             </div>
           </div>
         </div>
       </aside>
 
-      <main className="content">
-        <Header />
+      <main className="content-designer">
+        <Header companyName={companyName} />
         
-        <div className="view-container">
+        <div className="view-container-designer">
           <AnimatePresence mode="wait">
             {activeTab === 'dashboard' && (
               <motion.div 
                 key="dashboard"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="dashboard-view"
+                exit={{ opacity: 0, y: -20 }}
+                className="dashboard-designer"
               >
-                <div className="dashboard-grid">
-                  <section className="welcome-banner glass-panel col-span-2">
-                    <div className="banner-content">
-                      <h2>Intelligent Scouting</h2>
-                      <p>Leverage AI to discover, match, and engage top-tier talent automatically.</p>
-                      <div className="banner-actions">
-                        <button className="btn-primary" onClick={() => setActiveTab('jd')}>
-                          <Zap size={18} /> New Mission
-                        </button>
-                        <button className="btn-secondary">View Analytics</button>
-                      </div>
+                <div className="hero-section glass-panel">
+                  <div className="hero-content-designer">
+                    <motion.h2 
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="hero-title"
+                    >
+                      The Future of <br /> <span className="highlight-text">Talent Discovery</span>
+                    </motion.h2>
+                    <p className="hero-subtitle">Autonomous agentic intelligence for the modern recruitment era.</p>
+                    <div className="hero-actions-designer">
+                      <button className="btn-primary-designer" onClick={() => setActiveTab('jd')}>
+                        Launch Mission <Zap size={18} />
+                      </button>
+                      <button className="btn-outline-designer" onClick={() => setActiveTab('analytics')}>System Insights</button>
                     </div>
-                    <div className="banner-illustration">
-                      <div className="orb pulse"></div>
-                    </div>
-                  </section>
-
-                  <div className="glass-card stat-card highlight">
-                    <div className="icon-box"><Target size={20} /></div>
-                    <span className="stat-label">Discovery Match</span>
-                    <span className="stat-value">
-                      {candidates.length > 0 ? `${Math.round(candidates.reduce((acc, c) => acc + c.matchScore, 0) / candidates.length)}%` : '94%'}
-                    </span>
-                    <span className="stat-trend positive">+5.4% this month</span>
                   </div>
-
-                  <div className="glass-card stat-card">
-                    <div className="icon-box"><Users size={20} /></div>
-                    <span className="stat-label">Talent Network</span>
-                    <span className="stat-value">1.2k+</span>
-                    <span className="stat-trend">Global Reach</span>
-                  </div>
-
-                  <div className="glass-card stat-card">
-                    <div className="icon-box"><MessageSquare size={20} /></div>
-                    <span className="stat-label">Active Engagements</span>
-                    <span className="stat-value">{candidates.filter(c => c.status === 'engaged').length}</span>
-                    <span className="stat-trend">Ready to interview</span>
+                  <div className="hero-visual">
+                    <div className="neural-sphere"></div>
                   </div>
                 </div>
 
-                <section className="recent-activity">
-                  <h3>Recent Missions</h3>
-                  <div className="activity-list">
+                <div className="stats-grid-designer">
+                  <div className="glass-card stat-card-designer">
+                    <div className="stat-icon-designer"><Target size={24} /></div>
+                    <h3>Precision Match</h3>
+                    <div className="stat-value-designer">98.4<span className="percent">%</span></div>
+                    <p>Highest in class accuracy</p>
+                  </div>
+                  <div className="glass-card stat-card-designer">
+                    <div className="stat-icon-designer"><Users size={24} /></div>
+                    <h3>Engineered Pool</h3>
+                    <div className="stat-value-designer">12.4<span className="unit">K</span></div>
+                    <p>Verified professional nodes</p>
+                  </div>
+                  <div className="glass-card stat-card-designer">
+                    <div className="stat-icon-designer"><MessageSquare size={24} /></div>
+                    <h3>Active Flows</h3>
+                    <div className="stat-value-designer">{candidates.filter(c => c.status !== 'discovered').length}</div>
+                    <p>Intelligent engagements</p>
+                  </div>
+                </div>
+
+                <div className="recent-missions-designer">
+                  <div className="section-header-designer">
+                    <h3>Recent Scouting Missions</h3>
+                    <button className="text-btn">View All History</button>
+                  </div>
+                  <div className="mission-list-designer">
                     {missions.map(mission => (
-                      <div 
+                      <motion.div 
                         key={mission.id} 
-                        className="glass-card activity-item clickable"
+                        whileHover={{ scale: 1.01, backgroundColor: 'rgba(255,255,255,0.03)' }}
+                        className="glass-card mission-item-designer clickable"
                         onClick={() => handleSelectMission(mission)}
                       >
-                        <div className="activity-icon"><FileText size={18} /></div>
-                        <div className="activity-info">
+                        <div className="mission-icon-box"><FileText size={20} /></div>
+                        <div className="mission-details-designer">
                           <h4>{mission.role}</h4>
-                          <p>{mission.discovered} candidates discovered • {mission.engaged} engaged</p>
+                          <p>{mission.discovered} nodes identified • {mission.engaged} engagements</p>
                         </div>
-                        <div className="activity-status">
-                          <span className={`status-tag ${mission.status === 'Active' ? 'pulse' : ''}`}>
-                            {mission.status}
-                          </span>
-                        </div>
-                        <ChevronRight size={18} className="chevron" />
-                      </div>
+                        <div className="mission-badge-designer">{mission.status}</div>
+                        <ChevronRight size={20} className="mission-chevron" />
+                      </motion.div>
                     ))}
                   </div>
-                </section>
+                </div>
               </motion.div>
             )}
 
@@ -341,55 +347,60 @@ function App() {
                 key="jd"
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="jd-view"
+                className="workspace-designer"
               >
-                <div className="view-header">
-                  <h2>New Scouting Mission</h2>
-                  <p>Paste a job description to begin the autonomous scouting cycle.</p>
+                <div className="workspace-header-designer">
+                  <h2>Neural Scouting Workspace</h2>
+                  <p>Input role parameters to initiate the autonomous discovery cycle.</p>
                 </div>
                 
-                <div className="glass-panel input-container">
-                  <div className="input-header">
-                    <ShieldCheck size={16} /> <span>JD Analyzer Active</span>
-                  </div>
-                  <textarea 
-                    placeholder="E.g. We are looking for a Senior React Developer with 5+ years of experience in..."
-                    className="jd-textarea"
-                    value={jdText}
-                    onChange={(e) => setJdText(e.target.value)}
-                  />
-                  
-                  {isParsing && (
-                    <div className="discovery-logs glass-card">
-                      {discoveryLogs.map((log, i) => (
-                        <motion.div 
-                          key={i}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className="log-entry"
-                        >
-                          <Zap size={12} className="pulse" /> {log}
-                        </motion.div>
-                      ))}
-                      <div className="loader-line"></div>
+                <div className="workspace-grid-designer">
+                  <div className="glass-panel editor-container-designer">
+                    <div className="editor-toolbar-designer">
+                      <ShieldCheck size={18} /> <span>Strategic AI Core Active</span>
                     </div>
-                  )}
+                    <textarea 
+                      placeholder="Paste your job description... Our neural engine will tokenize requirements and identify talent clusters."
+                      className="editor-textarea-designer"
+                      value={jdText}
+                      onChange={(e) => setJdText(e.target.value)}
+                    />
+                    
+                    {isParsing && (
+                      <div className="neural-logs-designer glass-card">
+                        {discoveryLogs.map((log, i) => (
+                          <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="neural-log-entry">
+                            <Zap size={14} className="glow-icon" /> {log}
+                          </motion.div>
+                        ))}
+                        <div className="scan-line"></div>
+                      </div>
+                    )}
 
-                  <div className="input-footer">
-                    <div className="hints">
-                      <span>Pro tip: Mention specific technologies for better matching.</span>
+                    <div className="editor-footer-designer">
+                      <p>Neural engine optimizes for: Tech Stack, Senority, Domain, and Cultural Fit.</p>
+                      <button 
+                        className={`btn-primary-designer ${isParsing ? 'loading' : ''}`} 
+                        onClick={handleParse}
+                        disabled={isParsing || !jdText.trim()}
+                      >
+                        {isParsing ? 'Analyzing...' : 'Initiate Neural Search'}
+                      </button>
                     </div>
-                    <button 
-                      className={`btn-primary ${isParsing ? 'loading' : ''}`} 
-                      onClick={handleParse}
-                      disabled={isParsing || !jdText.trim()}
-                    >
-                      {isParsing ? (
-                        <>Parsing JD...</>
-                      ) : (
-                        <><BrainCircuit size={18} /> Initiate Scouting</>
-                      )}
-                    </button>
+                  </div>
+
+                  <div className="source-panel-designer glass-panel">
+                    <h3>Knowledge Sources</h3>
+                    <div className="drop-zone-designer">
+                      <UploadCloud size={48} className="drop-icon" />
+                      <p>Import via <b>Dataset</b> or <b>API</b></p>
+                      <button className="btn-secondary-designer">Connect Source</button>
+                    </div>
+                    <div className="source-metrics-designer">
+                      <div className="s-metric"><span>LinkedIn Graph</span> <CheckCircle size={16} /></div>
+                      <div className="s-metric"><span>GitHub Commits</span> <CheckCircle size={16} /></div>
+                      <div className="s-metric"><span>StackOverflow</span> <CheckCircle size={16} /></div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -400,75 +411,69 @@ function App() {
                 key="candidates"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="candidates-view"
+                className="results-designer"
               >
-                <div className="view-header">
-                  <div className="header-left">
-                    <h2>Scouting Results</h2>
-                    <p>{candidates.length} potential matches discovered from global sources.</p>
+                <div className="results-header-designer">
+                  <div>
+                    <h2>Discovery Cluster</h2>
+                    <p>{candidates.length} high-precision nodes identified.</p>
                   </div>
-                  <div className="header-actions">
-                    <button className="glass-card icon-btn"><Filter size={18} /></button>
-                    <button className="btn-primary" onClick={() => setActiveTab('shortlist')}>View Shortlist</button>
+                  <div className="results-actions-designer">
+                    <button className="glass-card filter-btn-designer"><Filter size={20} /></button>
+                    <button className="btn-primary-designer" onClick={() => setActiveTab('shortlist')}>Pipeline View</button>
                   </div>
                 </div>
                 
-                <div className="candidate-grid">
+                <div className="candidate-grid-designer">
                   {candidates.map((candidate, i) => (
                     <motion.div 
                       key={candidate.id} 
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="glass-card candidate-card"
+                      transition={{ delay: i * 0.05 }}
+                      className="glass-card node-card-designer"
                     >
-                      <div className="card-top">
-                        <div className="avatar-wrapper">
-                          <div className="avatar">{candidate.name[0]}</div>
-                          <div className="match-ring" style={{'--score': `${candidate.matchScore}%`}}></div>
+                      <div className="node-header-designer">
+                        <div className="node-avatar-designer">
+                          {candidate.name[0]}
+                          <div className="node-ring" style={{'--score': `${candidate.matchScore}%`}}></div>
                         </div>
-                        <div className="candidate-meta">
+                        <div className="node-meta-designer">
                           <h3>{candidate.name}</h3>
-                          <p>{candidate.role} • {candidate.experience}</p>
-                        </div>
-                        <div className="score-badge">
-                          <span className="label">Match</span>
-                          <span className="value">{candidate.matchScore}%</span>
-                        </div>
-                      </div>
-
-                      <div className="card-content">
-                        <div className="match-analysis">
-                          <h4>AI Analysis</h4>
-                          <ul>
-                            {candidate.matchReasons.slice(0, 2).map((r, idx) => (
-                              <li key={idx}><CheckCircle size={14} /> {r}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="skills-row">
-                          {candidate.skills.slice(0, 4).map(s => <span key={s} className="skill-tag">{s}</span>)}
-                          {candidate.skills.length > 4 && <span className="skill-tag plus">+{candidate.skills.length - 4}</span>}
-                        </div>
-                      </div>
-
-                      <div className="card-actions">
-                        {candidate.status === 'engaged' ? (
-                          <div className="engagement-status">
-                            <span className="interest-label">Interest Score:</span>
-                            <span className="interest-value">{candidate.interestScore}%</span>
+                          <div className="node-tags-designer">
+                            <span className="n-tag source">{candidate.source}</span>
+                            <span className="n-tag match">{candidate.matchScore}% Match</span>
                           </div>
+                        </div>
+                      </div>
+
+                      <div className="node-bio-designer">
+                        <p>{candidate.role}</p>
+                        <div className="node-stats-designer">
+                          <span><Clock size={12} /> {candidate.experience}</span>
+                          <span><DollarSign size={12} /> {candidate.expectedSalary}</span>
+                        </div>
+                      </div>
+
+                      <div className="node-insights-designer">
+                        <h4>AI Token Analysis</h4>
+                        <ul>
+                          {candidate.matchReasons.slice(0, 2).map((r, idx) => (
+                            <li key={idx}><Zap size={12} /> {r}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="node-actions-designer">
+                        {candidate.status !== 'discovered' ? (
+                          <div className="node-status-badge">{candidate.status.toUpperCase()}</div>
                         ) : (
-                          <button className="btn-primary full-width" onClick={() => startEngagement(candidate)}>
-                            <MessageSquare size={16} /> Engage Candidate
+                          <button className="btn-primary-designer full-width" onClick={() => startEngagement(candidate)}>
+                            Engage Profile
                           </button>
                         )}
-                        <button 
-                          className="btn-secondary icon-only" 
-                          onClick={() => window.open(candidate.profileUrl, '_blank')}
-                          title="Open LinkedIn Profile"
-                        >
-                          <ExternalLink size={16} />
+                        <button className="btn-outline-designer icon-btn" onClick={() => window.open(candidate.profileUrl, '_blank')}>
+                          <ExternalLink size={18} />
                         </button>
                       </div>
                     </motion.div>
@@ -482,68 +487,161 @@ function App() {
                 key="shortlist"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="shortlist-view"
+                className="pipeline-designer"
               >
-                <div className="view-header">
-                  <h2>Ranked Shortlist</h2>
-                  <p>Candidates sorted by combined Match and Interest scores.</p>
+                <div className="results-header-designer">
+                  <h2>Active Talent Pipeline</h2>
+                  <p>Real-time tracking of neural engagement cycles.</p>
                 </div>
 
-                <div className="glass-panel shortlist-table-container">
-                  <table className="shortlist-table">
+                <div className="pipeline-table-wrapper-designer">
+                  <table className="pipeline-table-designer">
                     <thead>
                       <tr>
-                        <th>Candidate</th>
-                        <th>Match Score</th>
-                        <th>Interest Score</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th>Candidate Profile</th>
+                        <th>Metrics</th>
+                        <th>Status Flow</th>
+                        <th>Economics</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {candidates
-                        .filter(c => c.status === 'engaged')
-                        .sort((a, b) => (b.matchScore + b.interestScore) - (a.matchScore + a.interestScore))
+                        .filter(c => c.status !== 'discovered')
                         .map(c => (
                           <tr key={c.id}>
                             <td>
-                              <div className="table-user">
-                                <div className="avatar-sm">{c.name[0]}</div>
+                              <div className="table-node-designer">
+                                <div className="table-avatar-designer">{c.name[0]}</div>
                                 <div>
-                                  <div className="name">{c.name}</div>
-                                  <div className="role">{c.role}</div>
+                                  <div className="table-name-designer">{c.name}</div>
+                                  <div className="table-source-designer">{c.source}</div>
                                 </div>
                               </div>
                             </td>
                             <td>
-                              <div className="score-pill match">{c.matchScore}%</div>
+                              <div className="table-metrics-designer">
+                                <div className="m-pill">Match: {c.matchScore}%</div>
+                                <div className="m-pill interest">Intent: {c.interestScore}%</div>
+                              </div>
                             </td>
                             <td>
-                              <div className="score-pill interest">{c.interestScore}%</div>
+                              <select 
+                                className={`status-select-designer ${c.status}`} 
+                                value={c.status}
+                                onChange={(e) => updateCandidateStatus(c.id, e.target.value)}
+                              >
+                                <option value="engaged">Engaged</option>
+                                <option value="screened">Screened</option>
+                                <option value="interviewing">Interviewing</option>
+                                <option value="offered">Offered</option>
+                                <option value="hired">Hired</option>
+                                <option value="rejected">Rejected</option>
+                              </select>
                             </td>
                             <td>
-                              <span className="status-pill ready">Ready for Interview</span>
+                              <div className="table-economics-designer">
+                                <div className="e-val">{c.expectedSalary}</div>
+                                <div className="e-sub">{c.availability}</div>
+                              </div>
                             </td>
                             <td>
-                              <div className="table-actions">
-                                <button className="btn-primary btn-sm">Invite</button>
-                                <button 
-                                  className="btn-secondary btn-sm icon-only" 
-                                  onClick={() => window.open(c.profileUrl, '_blank')}
-                                >
-                                  <ExternalLink size={14} />
-                                </button>
+                              <div className="table-actions-designer">
+                                <button className="btn-primary-designer btn-sm">Schedule</button>
+                                <button className="btn-outline-designer btn-sm icon-btn"><Clock size={16} /></button>
                               </div>
                             </td>
                           </tr>
                         ))}
                     </tbody>
                   </table>
-                  {candidates.filter(c => c.status === 'engaged').length === 0 && (
-                    <div className="empty-state">
-                      <p>No candidates have been engaged yet. Go to the Candidate Pool to initiate outreach.</p>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'analytics' && (
+              <motion.div 
+                key="analytics"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="analytics-designer"
+              >
+                <div className="results-header-designer">
+                  <h2>Neural Intelligence Insights</h2>
+                  <p>Performance metrics for the current scouting cycle.</p>
+                </div>
+                
+                <div className="analytics-grid-designer">
+                  <div className="glass-panel analytics-card-designer">
+                    <h3>Conversion Funnel</h3>
+                    <div className="modern-funnel">
+                      <div className="funnel-step">
+                        <div className="f-bar" style={{ width: '100%' }}></div>
+                        <div className="f-label">Discovered: {candidates.length}</div>
+                      </div>
+                      <div className="funnel-step">
+                        <div className="f-bar" style={{ width: `${(candidates.filter(c => c.status !== 'discovered').length / Math.max(1, candidates.length)) * 100}%` }}></div>
+                        <div className="f-label">Engaged: {candidates.filter(c => c.status !== 'discovered').length}</div>
+                      </div>
+                      <div className="funnel-step">
+                        <div className="f-bar" style={{ width: `${(candidates.filter(c => c.status === 'interviewing').length / Math.max(1, candidates.length)) * 100}%` }}></div>
+                        <div className="f-label">Interviewing: {candidates.filter(c => c.status === 'interviewing').length}</div>
+                      </div>
                     </div>
-                  )}
+                  </div>
+
+                  <div className="glass-panel analytics-card-designer">
+                    <h3>Channel Efficiency</h3>
+                    <div className="channel-stats-designer">
+                      {['LinkedIn', 'GitHub', 'StackOverflow', 'Indeed'].map(source => {
+                        const count = candidates.filter(c => c.source === source).length;
+                        const percent = (count / Math.max(1, candidates.length)) * 100;
+                        return (
+                          <div key={source} className="channel-row-designer">
+                            <span className="c-label">{source}</span>
+                            <div className="c-bar-bg"><motion.div initial={{ width: 0 }} animate={{ width: `${percent}%` }} className="c-bar-fill" /></div>
+                            <span className="c-count">{count}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'settings' && (
+              <motion.div 
+                key="settings"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="settings-designer"
+              >
+                <div className="results-header-designer">
+                  <h2>System Configuration</h2>
+                  <p>Fine-tune the neural engine and branding parameters.</p>
+                </div>
+                
+                <div className="glass-panel settings-content-designer">
+                  <div className="settings-section-designer">
+                    <h3>Organization Identity</h3>
+                    <div className="input-group-designer">
+                      <label>Platform Display Name</label>
+                      <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="modern-input" />
+                    </div>
+                  </div>
+                  
+                  <div className="settings-section-designer">
+                    <h3>Neural Parameters</h3>
+                    <div className="input-group-designer">
+                      <label>Matching Confidence Threshold</label>
+                      <input type="range" min="10" max="90" defaultValue="45" className="modern-range" />
+                    </div>
+                    <div className="toggle-group-designer">
+                      <label>Autonomous Neural Outreach</label>
+                      <div className="modern-toggle active"></div>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -562,670 +660,131 @@ function App() {
       </AnimatePresence>
 
       <style>{`
-        /* Enhanced App Styles */
-        .app-container {
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+          --bg-deep: #05060b;
+          --bg-card: rgba(13, 17, 28, 0.7);
+          --accent-primary: #8b5cf6;
+          --accent-secondary: #06b6d4;
+          --text-main: #f8fafc;
+          --text-muted: #94a3b8;
+          --glass-border: rgba(255, 255, 255, 0.08);
+          --neon-glow: 0 0 30px rgba(139, 92, 246, 0.3);
+          --sidebar-width: 280px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg-deep); color: var(--text-main); overflow-x: hidden; }
+
+        .app-container-designer {
           display: flex;
           min-height: 100vh;
-          background: var(--bg-deep);
-          color: var(--text-main);
-          padding: 1rem;
-          gap: 1rem;
+          padding: 1.5rem;
+          gap: 1.5rem;
+          position: relative;
+          background: #05060b;
         }
+
+        /* Animated blobs */
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); z-index: 0; opacity: 0.2; animation: float 20s infinite alternate; }
+        .blob-1 { width: 500px; height: 500px; background: var(--accent-primary); top: -200px; right: -200px; }
+        .blob-2 { width: 400px; height: 400px; background: var(--accent-secondary); bottom: -100px; left: -100px; animation-duration: 25s; }
+        .blob-3 { width: 300px; height: 300px; background: #ec4899; top: 40%; left: 30%; animation-duration: 30s; }
+
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(100px, 100px) scale(1.2); } }
+
+        .glass-panel { background: var(--bg-card); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
         /* Sidebar */
-        .sidebar {
-          width: 280px;
-          display: flex;
-          flex-direction: column;
-          padding: 1.5rem;
-          position: sticky;
-          top: 1rem;
-          height: calc(100vh - 2rem);
-        }
+        .sidebar-designer { width: var(--sidebar-width); display: flex; flex-direction: column; padding: 2.5rem; height: calc(100vh - 3rem); position: sticky; top: 1.5rem; z-index: 10; }
+        .sidebar-brand-designer { display: flex; align-items: center; gap: 15px; margin-bottom: 4rem; font-weight: 800; font-size: 1.8rem; letter-spacing: -1px; }
+        .brand-icon-designer { color: var(--accent-primary); filter: drop-shadow(0 0 10px var(--accent-primary)); }
+        .sidebar-nav-designer { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .sidebar-item { position: relative; display: flex; align-items: center; gap: 15px; padding: 14px 20px; border-radius: 20px; cursor: pointer; color: var(--text-muted); font-weight: 600; transition: 0.3s; }
+        .sidebar-item:hover { color: white; background: rgba(255,255,255,0.05); }
+        .sidebar-item.active { color: var(--accent-primary); background: rgba(139, 92, 246, 0.1); }
+        .active-indicator { position: absolute; left: 0; top: 25%; bottom: 25%; width: 4px; background: var(--accent-primary); border-radius: 0 4px 4px 0; box-shadow: 0 0 10px var(--accent-primary); }
 
-        .sidebar-brand {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 2.5rem;
-          font-weight: 800;
-          font-size: 1.5rem;
-          color: var(--text-main);
-        }
-
-        .logo-icon {
-          color: var(--accent-primary);
-        }
-
-        .sidebar-nav {
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-          flex: 1;
-        }
-
-        .sidebar-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 16px;
-          border-radius: 12px;
-          cursor: pointer;
-          color: var(--text-muted);
-          font-weight: 500;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .sidebar-item:hover {
-          color: var(--text-main);
-          background: hsla(230, 25%, 20%, 0.5);
-        }
-
-        .sidebar-item.active {
-          color: var(--accent-primary);
-          background: hsla(260, 80%, 65%, 0.1);
-          box-shadow: inset 0 0 0 1px hsla(260, 80%, 65%, 0.2);
-        }
-
-        .sidebar-footer {
-          margin-top: auto;
-        }
-
-        .quota-card {
-          padding: 1rem;
-          font-size: 0.8rem;
-        }
-
-        .quota-header {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 8px;
-          color: var(--text-muted);
-        }
-
-        .progress-bar {
-          height: 6px;
-          background: rgba(255,255,255,0.05);
-          border-radius: 3px;
-          overflow: hidden;
-        }
-
-        .progress-fill {
-          height: 100%;
-          background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-        }
-
-        /* Content Area */
-        .content {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          min-width: 0;
-        }
-
-        .main-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.75rem 1.5rem;
-          height: 64px;
-        }
-
-        .header-actions {
-          display: flex;
-          align-items: center;
-          gap: 1.5rem;
-        }
-
-        .search-bar {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 6px 12px;
-          width: 300px;
-        }
-
-        .search-bar input {
-          background: none;
-          border: none;
-          color: var(--text-main);
-          outline: none;
-          width: 100%;
-          font-size: 0.9rem;
-        }
-
-        .user-profile {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          position: relative;
-        }
-
-        .status-indicator {
-          width: 8px;
-          height: 8px;
-          background: var(--accent-success);
-          border-radius: 50%;
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          border: 2px solid var(--bg-surface);
-        }
-
-        .profile-img {
-          width: 36px;
-          height: 36px;
-          background: var(--accent-primary);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 700;
-          font-size: 0.8rem;
-        }
+        /* Content */
+        .content-designer { flex: 1; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; z-index: 1; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; height: 80px; padding: 0 1rem; }
+        .logo-text h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
+        .gradient-text { background: linear-gradient(to right, #fff, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .company-badge { font-size: 0.7rem; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 20px; color: var(--accent-primary); font-weight: 700; margin-left: 10px; border: 1px solid rgba(139, 92, 246, 0.2); }
+        .search-bar-modern { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 20px; padding: 10px 20px; display: flex; align-items: center; gap: 12px; width: 350px; }
+        .search-bar-modern input { background: none; border: none; color: white; outline: none; width: 100%; font-size: 0.9rem; }
 
         /* Dashboard */
-        .dashboard-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-
-        .col-span-2 { grid-column: span 2; }
-
-        .welcome-banner {
-          display: flex;
-          justify-content: space-between;
-          padding: 3rem;
-          overflow: hidden;
-          position: relative;
-        }
-
-        .banner-content {
-          max-width: 60%;
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          z-index: 1;
-        }
-
-        .banner-content h2 {
-          font-size: 2.8rem;
-          line-height: 1.1;
-          letter-spacing: -0.02em;
-        }
-
-        .banner-actions {
-          display: flex;
-          gap: 1rem;
-          margin-top: 1rem;
-        }
-
-        .banner-illustration {
-          position: absolute;
-          right: -50px;
-          top: -50px;
-          width: 300px;
-          height: 300px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .orb {
-          width: 200px;
-          height: 200px;
-          background: radial-gradient(circle, var(--accent-primary), transparent 70%);
-          filter: blur(40px);
-          opacity: 0.3;
-        }
-
-        .stat-card {
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          position: relative;
-        }
-
-        .stat-card.highlight {
-          border-color: hsla(260, 80%, 65%, 0.3);
-        }
-
-        .icon-box {
-          width: 40px;
-          height: 40px;
-          background: hsla(260, 80%, 65%, 0.1);
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: var(--accent-primary);
-          margin-bottom: 10px;
-        }
-
-        .stat-label { color: var(--text-muted); font-size: 0.9rem; }
-        .stat-value { font-size: 2rem; font-weight: 800; }
-        .stat-trend { font-size: 0.75rem; color: var(--text-dim); }
-        .stat-trend.positive { color: var(--accent-success); }
-
-        /* JD View */
-        .input-container {
-          padding: 2rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-
-        .input-header {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: var(--accent-secondary);
-          font-size: 0.9rem;
-          font-weight: 600;
-        }
-
-        .jd-textarea {
-          width: 100%;
-          height: 350px;
-          background: rgba(0,0,0,0.2);
-          border: 1px solid var(--glass-border);
-          border-radius: 16px;
-          padding: 2rem;
-          color: var(--text-main);
-          font-family: inherit;
-          font-size: 1.1rem;
-          resize: none;
-          transition: border-color 0.3s ease;
-        }
-
-        .jd-textarea:focus {
-          outline: none;
-          border-color: var(--accent-primary);
-        }
-
-        .input-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .hints { color: var(--text-dim); font-size: 0.85rem; }
-
-        /* Candidate Grid */
-        .candidate-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 1.5rem;
-          margin-top: 1.5rem;
-        }
-
-        .candidate-card {
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-
-        .card-top {
-          display: flex;
-          align-items: flex-start;
-          gap: 1rem;
-        }
-
-        .avatar-wrapper {
-          position: relative;
-          width: 56px;
-          height: 56px;
-        }
-
-        .avatar {
-          width: 56px;
-          height: 56px;
-          background: var(--accent-primary);
-          border-radius: 14px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.2rem;
-          font-weight: 700;
-        }
-
-        .match-ring {
-          position: absolute;
-          inset: -4px;
-          border-radius: 18px;
-          border: 2px solid transparent;
-          border-top-color: var(--accent-primary);
-          transform: rotate(calc(var(--score) * 3.6deg));
-        }
-
-        .candidate-meta h3 { font-size: 1.1rem; margin-bottom: 2px; }
-        .candidate-meta p { color: var(--text-muted); font-size: 0.85rem; }
-
-        .score-badge {
-          margin-left: auto;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-        }
-
-        .score-badge .label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-dim); }
-        .score-badge .value { font-size: 1.2rem; font-weight: 800; color: var(--accent-primary); }
-
-        .match-analysis {
-          background: rgba(255,255,255,0.03);
-          padding: 1rem;
-          border-radius: 10px;
-          margin-bottom: 1rem;
-        }
-
-        .match-analysis h4 { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
-        .match-analysis ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-        .match-analysis li { font-size: 0.8rem; display: flex; gap: 8px; line-height: 1.3; }
-        .match-analysis li svg { color: var(--accent-success); flex-shrink: 0; }
-
-        .skills-row { display: flex; gap: 6px; flex-wrap: wrap; }
-        .skill-tag {
-          background: rgba(255,255,255,0.06);
-          padding: 4px 10px;
-          border-radius: 6px;
-          font-size: 0.75rem;
-          color: var(--text-muted);
-        }
-
-        .card-actions { display: flex; gap: 10px; margin-top: auto; }
-        .full-width { flex: 1; }
+        .hero-section { display: grid; grid-template-columns: 1.2fr 0.8fr; padding: 4rem; position: relative; overflow: hidden; }
+        .hero-title { font-size: 4rem; line-height: 1.1; font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -2px; }
+        .highlight-text { color: var(--accent-primary); position: relative; }
+        .highlight-text::after { content: ''; position: absolute; bottom: 5px; left: 0; width: 100%; height: 8px; background: rgba(139, 92, 246, 0.2); z-index: -1; }
+        .hero-subtitle { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 500px; }
+        .hero-actions-designer { display: flex; gap: 1.5rem; }
         
-        .icon-only {
-          padding: 8px !important;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
+        .btn-primary-designer { background: var(--accent-primary); color: white; padding: 16px 32px; border-radius: 20px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: var(--neon-glow); }
+        .btn-primary-designer:hover { transform: scale(1.05) rotate(-1deg); box-shadow: 0 0 40px rgba(139, 92, 246, 0.5); }
+        .btn-outline-designer { background: none; color: white; border: 1px solid var(--glass-border); padding: 16px 32px; border-radius: 20px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-outline-designer:hover { background: rgba(255,255,255,0.05); }
 
-        .table-actions {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-        }
+        .stats-grid-designer { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+        .stat-card-designer { padding: 2.5rem; text-align: center; }
+        .stat-icon-designer { width: 50px; height: 50px; background: rgba(139, 92, 246, 0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--accent-primary); margin: 0 auto 1.5rem; }
+        .stat-value-designer { font-size: 3rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 5px; }
+        .stat-value-designer .percent { font-size: 1.2rem; color: var(--accent-primary); }
 
-        .btn-sm {
-          padding: 4px 8px !important;
-          font-size: 0.75rem !important;
-        }
+        /* Workspace */
+        .workspace-grid-designer { display: grid; grid-template-columns: 1fr 340px; gap: 2rem; }
+        .editor-textarea-designer { width: 100%; height: 450px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 32px; padding: 2.5rem; color: white; font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; line-height: 1.8; resize: none; outline: none; transition: 0.3s; }
+        .editor-textarea-designer:focus { border-color: var(--accent-primary); box-shadow: var(--neon-glow); }
+
+        .drop-zone-designer { border: 2px dashed var(--glass-border); border-radius: 32px; padding: 3rem; text-align: center; cursor: pointer; transition: 0.3s; }
+        .drop-zone-designer:hover { border-color: var(--accent-primary); background: rgba(255,255,255,0.02); }
+        .drop-icon { color: var(--text-dim); margin-bottom: 1.5rem; }
+
+        /* Node Cards */
+        .candidate-grid-designer { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .node-card-designer { padding: 2rem; position: relative; overflow: hidden; }
+        .node-card-designer:hover { transform: translateY(-10px); border-color: var(--accent-primary); box-shadow: var(--neon-glow); }
+        .node-avatar-designer { width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800; position: relative; }
+        .node-ring { position: absolute; inset: -5px; border-radius: 24px; border: 2px solid transparent; border-top-color: var(--accent-primary); transform: rotate(calc(var(--score) * 3.6deg)); }
+        
+        .n-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 8px; }
+        .n-tag.source { background: rgba(255,255,255,0.05); color: var(--accent-secondary); }
+        .n-tag.match { background: rgba(139, 92, 246, 0.15); color: var(--accent-primary); }
+
+        .node-insights-designer { background: rgba(0,0,0,0.2); padding: 1.2rem; border-radius: 20px; margin: 1.5rem 0; }
+        .node-insights-designer h4 { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .node-insights-designer ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .node-insights-designer li { font-size: 0.85rem; display: flex; gap: 10px; color: var(--text-muted); }
+        .node-insights-designer li svg { color: var(--accent-primary); flex-shrink: 0; }
+
+        /* Pipeline Table */
+        .pipeline-table-designer { width: 100%; border-spacing: 0 12px; border-collapse: separate; }
+        .pipeline-table-designer th { text-align: left; padding: 1.5rem; color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .pipeline-table-designer td { padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-style: solid none; }
+        .pipeline-table-designer td:first-child { border-radius: 24px 0 0 24px; border-left-style: solid; }
+        .pipeline-table-designer td:last-child { border-radius: 0 24px 24px 0; border-right-style: solid; }
+
+        .status-select-designer { background: #111420; color: white; border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 12px; font-weight: 600; outline: none; cursor: pointer; }
+        .status-select-designer.interviewing { color: var(--accent-secondary); border-color: var(--accent-secondary); }
+        .status-select-designer.offered { color: var(--accent-tertiary); border-color: var(--accent-tertiary); }
+
+        /* Analytics */
+        .modern-funnel { display: flex; flex-direction: column; gap: 15px; margin-top: 2rem; }
+        .f-bar { height: 45px; background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); border-radius: 15px; box-shadow: var(--neon-glow); position: relative; overflow: hidden; }
+        .f-bar::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); animation: sweep 3s infinite; }
+        @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .f-label { font-size: 0.9rem; font-weight: 700; margin-top: 5px; color: var(--text-muted); }
 
         /* Chat Modal */
-        .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.8);
-          backdrop-filter: blur(4px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-          padding: 1rem;
-        }
-
-        .chat-modal {
-          width: 100%;
-          max-width: 500px;
-          height: 600px;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-        }
-
-        .modal-header {
-          padding: 1.5rem;
-          border-bottom: 1px solid var(--glass-border);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .candidate-info { display: flex; gap: 12px; align-items: center; }
-        .candidate-info h3 { font-size: 1rem; }
-        .candidate-info p { font-size: 0.75rem; color: var(--accent-secondary); }
-
-        .chat-body {
-          flex: 1;
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          overflow-y: auto;
-        }
-
-        .message { display: flex; }
-        .message.ai { justify-content: flex-start; }
-        .message.candidate { justify-content: flex-end; }
-
-        .message-bubble {
-          max-width: 80%;
-          padding: 12px 16px;
-          border-radius: 16px;
-          font-size: 0.9rem;
-          line-height: 1.4;
-        }
-
-        .message.ai .message-bubble {
-          background: hsla(230, 25%, 20%, 0.8);
-          border-bottom-left-radius: 4px;
-        }
-
-        .message.candidate .message-bubble {
-          background: var(--accent-primary);
-          color: white;
-          border-bottom-right-radius: 4px;
-        }
-
-        .typing { font-weight: 800; letter-spacing: 2px; }
-
-        .chat-footer {
-          padding: 1rem;
-          background: rgba(0,0,0,0.2);
-          border-top: 1px solid var(--glass-border);
-        }
-
-        .ai-status {
-          font-size: 0.8rem;
-          color: var(--accent-secondary);
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        /* Shortlist Table */
-        .shortlist-table-container {
-          margin-top: 2rem;
-          padding: 0;
-          overflow: hidden;
-        }
-
-        .shortlist-table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-
-        .shortlist-table th {
-          text-align: left;
-          padding: 1.2rem 1.5rem;
-          color: var(--text-dim);
-          font-size: 0.8rem;
-          text-transform: uppercase;
-          border-bottom: 1px solid var(--glass-border);
-        }
-
-        .shortlist-table td {
-          padding: 1.2rem 1.5rem;
-          border-bottom: 1px solid var(--glass-border);
-        }
-
-        .table-user { display: flex; gap: 12px; align-items: center; }
-        .avatar-sm { width: 32px; height: 32px; background: var(--accent-secondary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
-        .table-user .name { font-weight: 600; font-size: 0.9rem; }
-        .table-user .role { font-size: 0.75rem; color: var(--text-muted); }
-
-        .score-pill {
-          padding: 4px 10px;
-          border-radius: 20px;
-          font-size: 0.85rem;
-          font-weight: 700;
-          display: inline-block;
-        }
-
-        .score-pill.match { background: rgba(150, 70, 255, 0.15); color: var(--accent-primary); }
-        .score-pill.interest { background: rgba(0, 200, 255, 0.15); color: var(--accent-secondary); }
-
-        .status-pill {
-          padding: 4px 10px;
-          border-radius: 6px;
-          font-size: 0.75rem;
-          font-weight: 600;
-        }
-
-        .status-pill.ready { background: rgba(50, 255, 150, 0.1); color: var(--accent-success); border: 1px solid hsla(150, 70%, 55%, 0.2); }
-
-        /* Animations */
-        .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse {
-          0% { opacity: 0.5; }
-          50% { opacity: 1; }
-          100% { opacity: 0.5; }
-        }
-
-        .loading {
-          opacity: 0.7;
-          pointer-events: none;
-        }
-
-        /* --- Responsive Design --- */
-        @media (max-width: 1024px) {
-          .sidebar {
-            width: 80px;
-            padding: 1rem 0.5rem;
-          }
-          .sidebar-brand span, .sidebar-item span, .sidebar-footer {
-            display: none;
-          }
-          .sidebar-brand { justify-content: center; margin-bottom: 2rem; }
-          .sidebar-item { justify-content: center; padding: 12px; }
-          
-          .dashboard-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          .welcome-banner {
-            grid-column: span 2;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .app-container {
-            flex-direction: column;
-            padding: 0.5rem;
-          }
-          .sidebar {
-            width: 100%;
-            height: auto;
-            flex-direction: row;
-            position: relative;
-            top: 0;
-            padding: 0.75rem;
-            justify-content: space-between;
-          }
-          .sidebar-nav {
-            flex-direction: row;
-            gap: 8px;
-          }
-          .sidebar-brand { margin-bottom: 0; }
-          .sidebar-item { padding: 8px; }
-
-          .dashboard-grid {
-            grid-template-columns: 1fr;
-          }
-          .welcome-banner {
-            grid-column: span 1;
-            padding: 1.5rem;
-            flex-direction: column;
-          }
-          .banner-content { max-width: 100%; text-align: center; }
-          .banner-actions { justify-content: center; }
-          .banner-illustration { display: none; }
-
-          .main-header {
-            padding: 0.75rem 1rem;
-          }
-          .search-bar { display: none; }
-          
-          .candidate-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .welcome-banner h2 { font-size: 2rem; }
-          .stat-value { font-size: 1.5rem; }
-          .btn-primary { width: 100%; justify-content: center; }
-          .card-actions { flex-direction: column; }
-        }
-
-        .discovery-logs {
-          background: rgba(0,0,0,0.3);
-          padding: 1rem;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          margin-bottom: 1rem;
-          font-family: 'Courier New', Courier, monospace;
-          font-size: 0.8rem;
-          color: var(--accent-secondary);
-          border-left: 2px solid var(--accent-primary);
-        }
-
-        .log-entry {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .loader-line {
-          height: 2px;
-          background: var(--accent-primary);
-          width: 100%;
-          margin-top: 8px;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .loader-line::after {
-          content: '';
-          position: absolute;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: var(--accent-secondary);
-          animation: slide 1.5s infinite linear;
-        }
-
-        @keyframes slide {
-          0% { left: -100%; }
-          100% { left: 100%; }
-        }
-        .activity-item.clickable {
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .activity-item.clickable:hover {
-          background: hsla(230, 25%, 25%, 0.4);
-          transform: translateX(4px);
-          border-color: var(--accent-primary);
-        }
+        .modal-overlay-designer { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .chat-modal-designer { width: 550px; height: 700px; display: flex; flex-direction: column; }
+        .message-bubble-designer { max-width: 80%; padding: 16px 20px; border-radius: 24px; line-height: 1.6; font-size: 0.95rem; }
+        .message-designer.ai .message-bubble-designer { background: rgba(255,255,255,0.05); border-bottom-left-radius: 4px; }
+        .message-designer.candidate .message-bubble-designer { background: var(--accent-primary); border-bottom-right-radius: 4px; box-shadow: var(--neon-glow); }
       `}</style>
     </div>
   )
